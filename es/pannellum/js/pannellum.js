@@ -147,6 +147,7 @@ window.pannellum = function (window, document, undefined) {
     // Display about information on right click
     var aboutMsg = document.createElement('span');
     aboutMsg.className = 'pnlm-about-msg';
+    aboutMsg.innerHTML = '<a href="https://sigcg02.maps.arcgis.com/home/index.html" target="_blank">Service SIG du Conseil départemental de l\'Aisne</a>';
     uiContainer.appendChild(aboutMsg);
     dragFix.addEventListener('contextmenu', aboutMessage);
 
