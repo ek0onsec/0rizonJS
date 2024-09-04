@@ -442,3 +442,9 @@ div.pnlm-tooltip:hover span:after {
 .pnlm-pointer {
     cursor: pointer;
 }
+
+.pnlm-fade-img{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
