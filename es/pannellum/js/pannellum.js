@@ -2254,7 +2254,7 @@ window.pannellum = function (window, document, undefined) {
     * @param {number} targetHfov - HFOV viewer should use once scene loads.
     * @param {boolean} [fadeDone] - If `true`, fade setup is skipped.
     */
-    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone) {
+    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone = false) {
       loaded = false;
       animatedMove = {};
 
