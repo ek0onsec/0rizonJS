@@ -104,7 +104,8 @@ window.pannellum = function (window, document, undefined) {
       disableKeyboardCtrl: false,
       crossOrigin: 'anonymous',
       touchPanSpeedCoeffFactor: 1,
-      capturedKeyNumbers: [16, 17, 27, 37, 38, 39, 40, 61, 65, 68, 83, 87, 107, 109, 173, 187, 189]
+      capturedKeyNumbers: [16, 17, 27, 37, 38, 39, 40, 61, 65, 68, 83, 87, 107, 109, 173, 187, 189],
+      sceneFadeDuration:1000
     };
 
     // Translatable / configurable strings
@@ -2253,7 +2254,7 @@ window.pannellum = function (window, document, undefined) {
     * @param {number} targetHfov - HFOV viewer should use once scene loads.
     * @param {boolean} [fadeDone] - If `true`, fade setup is skipped.
     */
-    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone=false) {
+    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone) {
       loaded = false;
       animatedMove = {};
 
@@ -2267,8 +2268,12 @@ window.pannellum = function (window, document, undefined) {
           fadeImg.style.transition = 'opacity ' + config.sceneFadeDuration / 1000 + 's';
           fadeImg.style.width = '100%';
           fadeImg.style.height = '100%';
+          fadeImg.style.position = 'absolute';
+          fadeImg.style.top = '0';
+          fadeImg.style.left = '0';
+          fadeImg.style.opacity = '1';
           fadeImg.onload = function () {
-            loadScene(sceneId, targetPitch, targetYaw, targetHfov, false);
+            loadScene(sceneId, targetPitch, targetYaw, targetHfov, true);
           };
           fadeImg.src = data;
           renderContainer.appendChild(fadeImg);
@@ -2283,6 +2288,7 @@ window.pannellum = function (window, document, undefined) {
       } else {
         workingPitch = targetPitch;
       }
+
       if (targetYaw === 'same') {
         workingYaw = config.yaw;
       } else if (targetYaw === 'sameAzimuth') {
@@ -2290,6 +2296,7 @@ window.pannellum = function (window, document, undefined) {
       } else {
         workingYaw = targetYaw;
       }
+
       if (targetHfov === 'same') {
         workingHfov = config.hfov;
       } else {
@@ -2316,8 +2323,29 @@ window.pannellum = function (window, document, undefined) {
       if (workingHfov !== undefined) {
         config.hfov = workingHfov;
       }
+
       fireEvent('scenechange', sceneId);
-      load();
+
+      // Hide loading display
+      infoDisplay.load.box.style.display = 'none';
+
+      // Load and fade in new scene
+      renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, function() {
+        renderInit();
+        if (renderer.fadeImg) {
+          renderer.fadeImg.style.opacity = '0';
+          setTimeout(function() {
+            renderContainer.removeChild(renderer.fadeImg);
+            loaded = true;
+            animateInit();
+            fireEvent('load');
+          }, config.sceneFadeDuration);
+        } else {
+          loaded = true;
+          animateInit();
+          fireEvent('load');
+        }
+      });
     }
 
     /**

@@ -5269,28 +5269,32 @@ window.pannellum = function (window, document, undefined) {
     * @param {number} targetHfov - HFOV viewer should use once scene loads.
     * @param {boolean} [fadeDone] - If `true`, fade setup is skipped.
     */
-    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone=false) {
+    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone) {
         loaded = false;
         animatedMove = {};
 
-        // Set up fade transition
+        // Set up fade if specified
         var fadeImg, workingPitch, workingYaw, workingHfov;
-
-        // Render current scene
-        var currentSceneData = renderer.render(config.pitch * Math.PI / 180, config.yaw * Math.PI / 180, config.hfov * Math.PI / 180, { returnImage: true });
-
-        if (currentSceneData !== undefined) {
-            fadeImg = new Image();
-            fadeImg.className = 'pnlm-fade-img';
-            fadeImg.style.position = 'absolute';
-            fadeImg.style.top = '0';
-            fadeImg.style.left = '0';
-            fadeImg.style.width = '100%';
-            fadeImg.style.height = '100%';
-            fadeImg.style.transition = 'opacity ' + (config.sceneFadeDuration / 1000) + 's';
-            fadeImg.style.opacity = '1';
-            fadeImg.src = currentSceneData;
-            renderContainer.appendChild(fadeImg);
+        if (config.sceneFadeDuration && !fadeDone) {
+            var data = renderer.render(config.pitch * Math.PI / 180, config.yaw * Math.PI / 180, config.hfov * Math.PI / 180, { returnImage: true });
+            if (data !== undefined) {
+                fadeImg = new Image();
+                fadeImg.className = 'pnlm-fade-img';
+                fadeImg.style.transition = 'opacity ' + config.sceneFadeDuration / 1000 + 's';
+                fadeImg.style.width = '100%';
+                fadeImg.style.height = '100%';
+                fadeImg.style.position = 'absolute';
+                fadeImg.style.top = '0';
+                fadeImg.style.left = '0';
+                fadeImg.style.opacity = '1';
+                fadeImg.onload = function () {
+                    loadScene(sceneId, targetPitch, targetYaw, targetHfov, true);
+                };
+                fadeImg.src = data;
+                renderContainer.appendChild(fadeImg);
+                renderer.fadeImg = fadeImg;
+                return;
+            }
         }
 
         // Set new pointing
@@ -5341,13 +5345,12 @@ window.pannellum = function (window, document, undefined) {
         infoDisplay.load.box.style.display = 'none';
 
         // Load and fade in new scene
-        loaded = false;
         renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, function() {
             renderInit();
-            if (fadeImg) {
-                fadeImg.style.opacity = '0';
+            if (renderer.fadeImg) {
+                renderer.fadeImg.style.opacity = '0';
                 setTimeout(function() {
-                    renderContainer.removeChild(fadeImg);
+                    renderContainer.removeChild(renderer.fadeImg);
                     loaded = true;
                     animateInit();
                     fireEvent('load');
