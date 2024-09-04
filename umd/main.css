@@ -444,11 +444,7 @@ div.pnlm-tooltip:hover span:after {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     transition: opacity 1s;
-    opacity: 1;
-    z-index: 10;
 }
 
 .pnlm-pointer {
