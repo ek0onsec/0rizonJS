@@ -4767,7 +4767,7 @@ window.pannellum = function (window, document, undefined) {
           div.onclick = div.ontouchend = function () {
             if (!div.clicked) {
               div.clicked = true;
-              loadScene(hs.sceneId, hs.targetPitch, hs.targetYaw, hs.targetHfov);
+              loadScene(hs.sceneId, hs.targetPitch, hs.targetYaw, hs.targetHfov, false);
             }
             return false;
           };
@@ -5771,7 +5771,7 @@ window.pannellum = function (window, document, undefined) {
     */
     this.loadScene = function (sceneId, pitch, yaw, hfov) {
       if (loaded !== false) {
-        loadScene(sceneId, pitch, yaw, hfov);
+        loadScene(sceneId, pitch, yaw, hfov, false);
       }
       return this;
     };
