@@ -5269,7 +5269,7 @@ window.pannellum = function (window, document, undefined) {
     * @param {number} targetHfov - HFOV viewer should use once scene loads.
     * @param {boolean} [fadeDone] - If `true`, fade setup is skipped.
     */
-    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone=false) {
+    function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone) {
         loaded = false;
         animatedMove = {};
 
@@ -5280,7 +5280,7 @@ window.pannellum = function (window, document, undefined) {
             config.hfov * Math.PI / 180,
             { returnImage: true });
 
-        if (currentSceneData !== undefined) {
+        if (currentSceneData) {
             fadeImg = new Image();
             fadeImg.className = 'pnlm-fade-img';
             fadeImg.style.position = 'absolute';
