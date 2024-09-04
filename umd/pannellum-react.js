@@ -3129,7 +3129,7 @@ window.pannellum = function (window, document, undefined) {
       // Labels
       loadButtonLabel: 'Click to<br>Load<br>Panorama',
       loadingLabel: 'Chargement...',
-      bylineLabel: 'by %s', // One substitution: author
+      bylineLabel: 'Réalisé par %s', // One substitution: author
 
       // Errors
       noPanoramaError: 'No panorama image was specified.',
@@ -5269,70 +5269,94 @@ window.pannellum = function (window, document, undefined) {
     * @param {boolean} [fadeDone] - If `true`, fade setup is skipped.
     */
     function loadScene(sceneId, targetPitch, targetYaw, targetHfov, fadeDone) {
-      loaded = false;
-      animatedMove = {};
+        loaded = false;
+        animatedMove = {};
 
-      // Set up fade if specified
-      var fadeImg, workingPitch, workingYaw, workingHfov;
-      if (config.sceneFadeDuration && !fadeDone) {
-        var data = renderer.render(config.pitch * Math.PI / 180, config.yaw * Math.PI / 180, config.hfov * Math.PI / 180, { returnImage: true });
-        if (data !== undefined) {
-          fadeImg = new Image();
-          fadeImg.className = 'pnlm-fade-img';
-          fadeImg.style.transition = 'opacity ' + config.sceneFadeDuration / 1000 + 's';
-          fadeImg.style.width = '100%';
-          fadeImg.style.height = '100%';
-          fadeImg.onload = function () {
-            loadScene(sceneId, targetPitch, targetYaw, targetHfov, true);
-          };
-          fadeImg.src = data;
-          renderContainer.appendChild(fadeImg);
-          renderer.fadeImg = fadeImg;
-          return;
+        // Set up fade transition
+        var fadeImg, workingPitch, workingYaw, workingHfov;
+
+        // Render current scene
+        var currentSceneData = renderer.render(config.pitch * Math.PI / 180, config.yaw * Math.PI / 180, config.hfov * Math.PI / 180, { returnImage: true });
+
+        if (currentSceneData !== undefined) {
+            fadeImg = new Image();
+            fadeImg.className = 'pnlm-fade-img';
+            fadeImg.style.position = 'absolute';
+            fadeImg.style.top = '0';
+            fadeImg.style.left = '0';
+            fadeImg.style.width = '100%';
+            fadeImg.style.height = '100%';
+            fadeImg.style.transition = 'opacity ' + (config.sceneFadeDuration / 1000) + 's';
+            fadeImg.style.opacity = '1';
+            fadeImg.src = currentSceneData;
+            renderContainer.appendChild(fadeImg);
         }
-      }
 
-      // Set new pointing
-      if (targetPitch === 'same') {
-        workingPitch = config.pitch;
-      } else {
-        workingPitch = targetPitch;
-      }
-      if (targetYaw === 'same') {
-        workingYaw = config.yaw;
-      } else if (targetYaw === 'sameAzimuth') {
-        workingYaw = config.yaw + (config.northOffset || 0) - (initialConfig.scenes[sceneId].northOffset || 0);
-      } else {
-        workingYaw = targetYaw;
-      }
-      if (targetHfov === 'same') {
-        workingHfov = config.hfov;
-      } else {
-        workingHfov = targetHfov;
-      }
+        // Set new pointing
+        if (targetPitch === 'same') {
+            workingPitch = config.pitch;
+        } else {
+            workingPitch = targetPitch;
+        }
 
-      // Destroy hot spots from previous scene
-      destroyHotSpots();
+        if (targetYaw === 'same') {
+            workingYaw = config.yaw;
+        } else if (targetYaw === 'sameAzimuth') {
+            workingYaw = config.yaw + (config.northOffset || 0) - (initialConfig.scenes[sceneId].northOffset || 0);
+        } else {
+            workingYaw = targetYaw;
+        }
 
-      // Create the new config for the scene
-      mergeConfig(sceneId);
+        if (targetHfov === 'same') {
+            workingHfov = config.hfov;
+        } else {
+            workingHfov = targetHfov;
+        }
 
-      // Stop motion
-      speed.yaw = speed.pitch = speed.hfov = 0;
+        // Destroy hot spots from previous scene
+        destroyHotSpots();
 
-      // Reload scene
-      processOptions();
-      if (workingPitch !== undefined) {
-        config.pitch = workingPitch;
-      }
-      if (workingYaw !== undefined) {
-        config.yaw = workingYaw;
-      }
-      if (workingHfov !== undefined) {
-        config.hfov = workingHfov;
-      }
-      fireEvent('scenechange', sceneId);
-      load();
+        // Create the new config for the scene
+        mergeConfig(sceneId);
+
+        // Stop motion
+        speed.yaw = speed.pitch = speed.hfov = 0;
+
+        // Reload scene
+        processOptions();
+        if (workingPitch !== undefined) {
+            config.pitch = workingPitch;
+        }
+        if (workingYaw !== undefined) {
+            config.yaw = workingYaw;
+        }
+        if (workingHfov !== undefined) {
+            config.hfov = workingHfov;
+        }
+
+        fireEvent('scenechange', sceneId);
+
+        // Hide loading display
+        infoDisplay.load.box.style.display = 'none';
+
+        // Load and fade in new scene
+        loaded = false;
+        renderer.init(panoImage, config.type, config.dynamic, config.haov * Math.PI / 180, config.vaov * Math.PI / 180, config.vOffset * Math.PI / 180, function() {
+            renderInit();
+            if (fadeImg) {
+                fadeImg.style.opacity = '0';
+                setTimeout(function() {
+                    renderContainer.removeChild(fadeImg);
+                    loaded = true;
+                    animateInit();
+                    fireEvent('load');
+                }, config.sceneFadeDuration);
+            } else {
+                loaded = true;
+                animateInit();
+                fireEvent('load');
+            }
+        });
     }
 
     /**

@@ -114,7 +114,7 @@ window.pannellum = function (window, document, undefined) {
       // Labels
       loadButtonLabel: 'Click to<br>Load<br>Panorama',
       loadingLabel: 'Chargement...',
-      bylineLabel: 'by %s', // One substitution: author
+      bylineLabel: 'Réalisé par %s', // One substitution: author
 
       // Errors
       noPanoramaError: 'No panorama image was specified.',
