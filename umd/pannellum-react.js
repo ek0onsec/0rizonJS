@@ -5305,6 +5305,7 @@ window.pannellum = function (window, document, undefined) {
         if (workingPitch !== undefined) {
             config.pitch = workingPitch;
         }
+
         if (workingYaw !== undefined) {
             config.yaw = workingYaw;
         }
