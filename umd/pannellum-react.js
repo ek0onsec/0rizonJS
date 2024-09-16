@@ -52371,7 +52371,8 @@ var PannellumVideo = (_temp = _class = function (_Component) {
                 "createTooltipFunc": hotspot.props.tooltip ? hotspot.props.tooltip : _this.hotspotTooltip,
                 "createTooltipArgs": hotspot.props.tooltipArg ? hotspot.props.tooltipArg : {},
                 "clickHandlerFunc": hotspot.props.handleClick ? hotspot.props.handleClick : _this.handleClickHotspot,
-                "clickHandlerArgs": hotspot.props.handleClickArg ? hotspot.props.handleClickArg : { name: "test" }
+                "clickHandlerArgs": hotspot.props.handleClickArg ? hotspot.props.handleClickArg : { name: "test" },
+                "text": hotspot.props.text ? hotspot.props.text : "",
               });
             default:
               return [];
