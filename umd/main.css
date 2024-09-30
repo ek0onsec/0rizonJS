@@ -361,7 +361,7 @@
 }
 
 div.pnlm-tooltip span {
-    visibility: visible;
+    visibility: hidden;
     position: absolute;
     border-radius: 3px;
     background-color: rgba(0,0,0,0.7);
@@ -372,9 +372,7 @@ div.pnlm-tooltip span {
     margin-left: -220px;
     cursor: default;
 }
-div.pnlm-tooltip span{
-    visibility: visible;
-}
+
 div.pnlm-tooltip span:after {
     content: '';
     position: absolute;
