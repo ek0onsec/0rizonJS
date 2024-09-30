@@ -1707,6 +1707,8 @@ window.pannellum = function (window, document, undefined) {
   
       var span = document.createElement('span');
       if (hs.text) {
+          console.log("Texte du hotspot:", hs.text);
+
           span.innerHTML = escapeHTML(hs.text);
   
           // Créer un nouvel élément pour le texte

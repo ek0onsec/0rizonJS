@@ -4722,6 +4722,7 @@ window.pannellum = function (window, document, undefined) {
   
       var span = document.createElement('span');
       if (hs.text) {
+        console.log("Texte du hotspot:", hs.text);
           span.innerHTML = escapeHTML(hs.text);
   
           // Créer un nouvel élément pour le texte
@@ -4731,7 +4732,7 @@ window.pannellum = function (window, document, undefined) {
   
           // Positionner le texte en dessous du point
           textDiv.style.position = 'absolute';
-          textDiv.style.top = '100%';
+          textDiv.style.bottom = '-30px'; // Ajustez cette valeur si nécessaire
           textDiv.style.left = '50%';
           textDiv.style.transform = 'translateX(-50%)';
           textDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
